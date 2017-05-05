@@ -1,0 +1,4 @@
+services:
+    dual.mapper:
+        class: Jprevo\Dual\DualBundle\Mapping\Mapper
+        arguments: ['@doctrine']
