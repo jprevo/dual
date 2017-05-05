@@ -1,0 +1,23 @@
+{
+  "name": "jprevo/dual",
+  "type": "symfony-bundle",
+  "description": "UI for ORM manipulation",
+  "keywords": ["ORM", "Database", "Doctrine"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Jonathan Prévost",
+      "email": "jo.prevo@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.5.9",
+    "symfony/framework-bundle": "~2.7|~3.0"
+  },
+  "require-dev": {
+    "doctrine/orm": "~2.3"
+  },
+  "autoload": {
+    "psr-4": { "Jprevo\\Dual\\DualBundle\\": "" }
+  }
+}
