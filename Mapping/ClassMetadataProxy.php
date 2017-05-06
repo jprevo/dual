@@ -55,6 +55,14 @@ class ClassMetadataProxy
     }
 
     /**
+     * @return bool
+     */
+    public function hasDistinctRootEntity()
+    {
+        return $this->rootEntityName !== $this->name;
+    }
+
+    /**
      * @return string
      */
     public function getEmName()
@@ -69,7 +77,11 @@ class ClassMetadataProxy
      */
     public function __call($name, $arguments)
     {
-        return call_user_func([$this->getSource(), $name], $arguments);
+        if (method_exists($this->getSource(), $name)) {
+            return call_user_func([$this->getSource(), $name], $arguments);
+        }
+
+        return $this->__get($name);
     }
 
     /**

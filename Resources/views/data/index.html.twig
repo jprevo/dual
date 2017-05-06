@@ -1,0 +1,12 @@
+{% extends 'DualBundle:layout:default.html.twig' %}
+
+{% block content %}
+<h2>{{ meta.getName() }}</h2>
+
+
+    {{ render(path('dual_data_display', {
+        'em': meta.emName,
+        'cl': meta.getName()
+    })) }}
+
+{% endblock %}

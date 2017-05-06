@@ -1,5 +1,88 @@
 {% extends 'DualBundle:layout:default.html.twig' %}
 
 {% block content %}
-    <h1>{{ meta.getName() }}</h1>
+    <h2>{{ meta.getName() }}</h2>
+
+    <ul class="structure-options list-unstyled">
+        {% if meta.hasDistinctRootEntity() %}
+        <li>Root entity : {{ meta.rootEntityName }}</li>
+        {% endif %}
+
+        {% if meta.isReadOnly %}
+        <li>Read only</li>
+        {% endif %}
+
+        <li>
+            Table : {{ meta.table|join(', ') }}
+        </li>
+    </ul>
+
+    <h3>Fields</h3>
+    <table class="table structure">
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Unique</th>
+                <th>Nullable</th>
+                <th>Options</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for field in meta.fieldMappings %}
+            <tr>
+                <td class="field-name">
+                    {% if field.id is defined and field.id %}
+                        <i class="fa fa-key" aria-hidden="true"></i>
+                    {% endif %}
+                    {{ field.fieldName }}
+                    <small class="text-muted">{{ field.columnName }}</small>
+                </td>
+                <td>
+                    {{ field.type }}
+                </td>
+                <td>
+                    {{ field.unique ? '<span class="text-info">Yes</span>'|raw : 'No' }}
+                </td>
+                <td>
+                    {{ field.nullable ? '<span class="text-info">Yes</span>'|raw : 'No' }}
+                </td>
+                <td>
+
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>Associations</h3>
+    {% if meta.associationMappings is empty %}
+        <p class="text-muted">There is no association for this entity.</p>
+    {% else %}
+        <table class="table associations">
+            <thead>
+            <tr>
+                <th>Field</th>
+                <th>Target entity</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for association in meta.associationMappings %}
+                <tr>
+                    <td class="field-name">
+                        {{ association.fieldName }}
+                    </td>
+                    <td>
+                        {{ association.targetEntity }}
+                    </td>
+                    <td>
+
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    {{ dump(meta) }}
 {% endblock %}

@@ -32,7 +32,7 @@ class Mapper
     }
 
     /**
-     * @param $paramClass
+     * @param string $paramClass
      * @return ClassMetadataProxy
      * @throws DualException
      */
@@ -53,6 +53,24 @@ class Mapper
     }
 
     /**
+     * @param string $emName
+     * @param string $className
+     * @return ClassMetadataProxy
+     * @throws DualException
+     */
+    public function getMeta($emName, $className)
+    {
+        if (!isset($this->ems[$emName])) {
+            throw new DualException(sprintf('Unable to find the Entity Manager "%s".', $emName));
+        }
+
+        $em = $this->ems[$emName];
+        $meta = $em->getMetadataFactory()->getMetadataFor($className);
+
+        return new ClassMetadataProxy($meta, $emName);
+    }
+
+    /**
      * Get class metadata in a tree with EntityManager as index
      * then class namespace as sub index
      * @return array
@@ -61,6 +79,7 @@ class Mapper
     {
         $tree = [];
 
+        // Create the tree
         foreach ($this->ems as $name => $em) {
             $tree[$name] = [];
 
@@ -73,6 +92,19 @@ class Mapper
                 }
 
                 $tree[$name][$ns][] = new ClassMetadataProxy($metadata, $name);
+            }
+        }
+
+        // Sort the tree alphabetically
+        ksort($tree);
+
+        foreach ($tree as $emName => $namespaces) {
+            ksort($tree[$emName]);
+
+            foreach ($namespaces as $ns => $meta) {
+                usort($tree[$emName][$ns], function(ClassMetadataProxy $meta1, ClassMetadataProxy $meta2) {
+                    return strcmp($meta1->getName(), $meta2->getName());
+                });
             }
         }
 

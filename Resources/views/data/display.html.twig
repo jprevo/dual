@@ -1,0 +1,11 @@
+<table class="table">
+    <thead>
+    <tr>
+        {% for field in meta.fieldNames %}
+        <th>{{ field }}</th>
+        {% endfor %}
+    </tr>
+    </thead>
+</table>
+
+{{ dump(meta) }}
