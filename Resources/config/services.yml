@@ -13,3 +13,66 @@ services:
         public: false
         tags:
             - { name: twig.extension }
+
+    dual.form_builder:
+        class: Jprevo\Dual\DualBundle\Data\FormBuilder
+        arguments: ['@form.factory', '@dual.mapper', '@dual.type_finder']
+
+    dual.type_finder:
+        class: Jprevo\Dual\DualBundle\Mapping\Type\TypeFinder
+
+    # Types
+    dual.type.string:
+        class: Jprevo\Dual\DualBundle\Mapping\Type\StringType
+        tags:
+            - { name: dual.type }
+
+    dual.type.integer:
+        class: Jprevo\Dual\DualBundle\Mapping\Type\IntegerType
+        tags:
+            - { name: dual.type }
+
+    dual.type.smallint:
+        class: Jprevo\Dual\DualBundle\Mapping\Type\SmallIntType
+        tags:
+            - { name: dual.type }
+
+    dual.type.bigint:
+        class: Jprevo\Dual\DualBundle\Mapping\Type\BigIntType
+        tags:
+            - { name: dual.type }
+
+    dual.type.boolean:
+        class: Jprevo\Dual\DualBundle\Mapping\Type\BooleanType
+        tags:
+            - { name: dual.type }
+
+    dual.type.decimal:
+        class: Jprevo\Dual\DualBundle\Mapping\Type\DecimalType
+        tags:
+            - { name: dual.type }
+
+    dual.type.date:
+        class: Jprevo\Dual\DualBundle\Mapping\Type\DateType
+        tags:
+            - { name: dual.type }
+
+    dual.type.time:
+        class: Jprevo\Dual\DualBundle\Mapping\Type\TimeType
+        tags:
+            - { name: dual.type }
+
+    dual.type.datetime:
+        class: Jprevo\Dual\DualBundle\Mapping\Type\DateTimeType
+        tags:
+            - { name: dual.type }
+
+    dual.type.datetimetz:
+        class: Jprevo\Dual\DualBundle\Mapping\Type\DateTimeTZType
+        tags:
+            - { name: dual.type }
+
+    dual.type.text:
+        class: Jprevo\Dual\DualBundle\Mapping\Type\TextType
+        tags:
+            - { name: dual.type }
