@@ -37,7 +37,7 @@ class ClassMetadataProxy
      */
     public function getShortName()
     {
-        $parts = explode('\\', $this->getSource()->getName());
+        $parts = explode('\\', $this->getName());
 
         return array_pop($parts);
     }
@@ -47,11 +47,7 @@ class ClassMetadataProxy
      */
     public function getParamName()
     {
-        $name = $this->getSource()->getName();
-        $name = str_replace('\\', '/', $name);
-        $name = $this->getEmName() . ':' . $name;
-
-        return $name;
+        return Mapper::classToParam($this->getEmName(), $this->getName());
     }
 
     /**

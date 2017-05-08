@@ -38,8 +38,7 @@ class Mapper
      */
     public function getMetaFromParam($paramClass)
     {
-        list($emName, $class) = explode(':', $paramClass);
-        $class = str_replace('/', '\\', $class);
+        list($emName, $class) = static::paramToClass($paramClass);
 
         if (!isset($this->ems[$emName])) {
             throw new DualException(sprintf('Unable to find the Entity Manager "%s".', $emName));
@@ -68,6 +67,30 @@ class Mapper
         $meta = $em->getMetadataFactory()->getMetadataFor($className);
 
         return new ClassMetadataProxy($meta, $emName);
+    }
+
+    /**
+     * @param $emName
+     * @param $className
+     * @return string
+     */
+    public static function classToParam($emName, $className)
+    {
+        $className = str_replace('\\', '/', $className);
+
+        return $emName . ':' . $className;
+    }
+
+    /**
+     * @param $param
+     * @return array
+     */
+    public static function paramToClass($param)
+    {
+        list($emName, $className) = explode(':', $param);
+        $className = str_replace('/', '\\', $className);
+
+        return [$emName, $className];
     }
 
     /**

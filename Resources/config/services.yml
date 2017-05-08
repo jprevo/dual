@@ -2,3 +2,14 @@ services:
     dual.mapper:
         class: Jprevo\Dual\DualBundle\Mapping\Mapper
         arguments: ['@doctrine']
+
+    dual.executer:
+        class: Jprevo\Dual\DualBundle\Data\Executer
+        arguments: ['@doctrine']
+
+    dual.twig_extension:
+        class: Jprevo\Dual\DualBundle\Twig\TwigExtension
+        arguments: ['@twig', '@router']
+        public: false
+        tags:
+            - { name: twig.extension }
