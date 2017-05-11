@@ -1,0 +1,15 @@
+{% block association_widget %}
+    <div>
+
+        <a href="#" class="btn btn-info js-select" data-multiple="{{ multiple ? 'true' : 'false' }}" data-class="{{ association.targetEntity }}">
+            <i class="fa fa-search-plus" aria-hidden="true"></i>
+            Select
+        </a>
+
+        {% if multiple %}
+            Select many <em>{{ association.targetEntity }}</em> entities.
+        {% else %}
+            Select one <em>{{ association.targetEntity }}</em> entity.
+        {% endif %}
+    </div>
+{% endblock %}

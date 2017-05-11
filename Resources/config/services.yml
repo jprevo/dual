@@ -21,6 +21,11 @@ services:
     dual.type_finder:
         class: Jprevo\Dual\DualBundle\Mapping\Type\TypeFinder
 
+    dual.form.type.association:
+        class: Jprevo\Dual\DualBundle\Data\Form\Type\AssociationType
+        tags:
+            - { name: form.type }
+
     # Types
     dual.type.string:
         class: Jprevo\Dual\DualBundle\Mapping\Type\StringType

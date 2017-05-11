@@ -4,7 +4,30 @@
     <h2>Create a new <em>{{ meta.name }}</em> entry</h2>
 
     {{ form_start(form) }}
-    {{ form_widget(form) }}
+
+    {% for child in form.children %}
+        {{ form_row(child) }}
+    {% endfor %}
+
+    <div class="form-group">
+        <input type="submit" class="btn btn-primary btn-lg" value="Create entry">
+    </div>
+
     {{ form_end(form) }}
 
+    {{ dump(meta) }}
+
+{% endblock %}
+
+{% block js %}
+    {{ parent() }}
+    <script>
+        var em = '{{ meta.emName }}';
+
+        $(function() {
+            $('.js-select').on('click', function(e) {
+
+            });
+        });
+    </script>
 {% endblock %}

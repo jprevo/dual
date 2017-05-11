@@ -2,6 +2,8 @@
 
 namespace Jprevo\Dual\DualBundle\Data;
 
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Jprevo\Dual\DualBundle\Data\Form\Type\AssociationType;
 use Jprevo\Dual\DualBundle\Mapping\ClassMetadataProxy;
 use Jprevo\Dual\DualBundle\Mapping\Mapper;
 use Jprevo\Dual\DualBundle\Mapping\Type\TypeFinder;
@@ -62,8 +64,24 @@ class FormBuilder
                 continue;
             }
 
+            if (!$meta->hasSetter($fieldName)) {
+                continue;
+            }
+
             $builder->add($fieldName, $type->getFormType($field), [
                 'label' => $fieldName
+            ]);
+        }
+
+        foreach ($meta->associationMappings as $assocName => $association) {
+
+            if (!$association['isOwningSide']) {
+                continue;
+            }
+
+            $builder->add($assocName, AssociationType::class, [
+                'label' => $assocName,
+                'association' => $association
             ]);
         }
 

@@ -59,6 +59,18 @@ class ClassMetadataProxy
     }
 
     /**
+     * @param $field
+     * @return bool
+     */
+    public function hasSetter($field)
+    {
+        $setter = 'set'.ucfirst($field);
+        $className = $this->getName();
+
+        return method_exists($className, $setter);
+    }
+
+    /**
      * @return string
      */
     public function getEmName()

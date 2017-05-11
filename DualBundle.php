@@ -19,5 +19,11 @@ class DualBundle extends Bundle
     public function build(ContainerBuilder $container)
     {
         $container->addCompilerPass(new TypePass());
+
+        $container->loadFromExtension('twig', array(
+            'form_themes' => array(
+                'DualBundle::form/association.html.twig',
+            )
+        ));
     }
 }

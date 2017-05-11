@@ -15,6 +15,32 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 class DataController extends Controller
 {
 
+
+    /**
+     * @Route("_dual/data/select.html", name="dual_data_select")
+     */
+    public function selectAction(Request $request)
+    {
+        $multiple = $request->get('multiple', false);
+
+        $query = Query::fromRequest($request);
+
+        $meta = $this->get('dual.mapper')->getMeta(
+            $query->getEmName(),
+            $query->getClassName()
+        );
+
+        $result = $this->get('dual.executer')
+            ->execute($query);
+
+        return $this->render('DualBundle::data/select.html.twig', [
+            'meta' => $meta,
+            'result' => $result,
+            'query' => $query,
+            'multiple' => $multiple
+        ]);
+    }
+
     /**
      * @Route("_dual/data/{class}.html", name="dual_data", requirements={"class" = ".+"})
      */
@@ -36,4 +62,6 @@ class DataController extends Controller
             'query' => $query
         ]);
     }
+
+
 }

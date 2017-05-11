@@ -28,6 +28,16 @@ class UpdateController extends Controller
             ->createBuilder($entity, $meta)
             ->getForm();
 
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->get('dual.executer')->save($entity, $meta);
+
+            return $this->redirectToRoute('dual_data', [
+                'class' => $class
+            ]);
+        }
+
         return $this->render('DualBundle::update/create.html.twig', [
             'meta' => $meta,
             'form' => $form->createView()

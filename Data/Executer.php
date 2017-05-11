@@ -4,6 +4,7 @@ namespace Jprevo\Dual\DualBundle\Data;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
+use Jprevo\Dual\DualBundle\Mapping\ClassMetadataProxy;
 
 /**
  * Class Executer
@@ -27,6 +28,21 @@ class Executer
         foreach ($registry->getManagerNames() as $id => $name) {
             $this->ems[$id] = $registry->getManager($id);
         }
+    }
+
+    /**
+     * @param mixed $entity
+     * @param ClassMetadataProxy $meta
+     * @return mixed
+     */
+    public function save($entity, ClassMetadataProxy $meta)
+    {
+        $em = $this->ems[$meta->getEmName()];
+
+        $em->persist($entity);
+        $em->flush($entity);
+
+        return $entity;
     }
 
     /**
