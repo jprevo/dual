@@ -18,16 +18,3 @@
     {{ dump(meta) }}
 
 {% endblock %}
-
-{% block js %}
-    {{ parent() }}
-    <script>
-        var em = '{{ meta.emName }}';
-
-        $(function() {
-            $('.js-select').on('click', function(e) {
-
-            });
-        });
-    </script>
-{% endblock %}

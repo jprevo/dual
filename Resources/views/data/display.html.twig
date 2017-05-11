@@ -1,0 +1,59 @@
+
+<pre><code>{{ result.dql }}</code></pre>
+
+<div class="d-flex flex-row">
+    <div class="p-2">{{ result.total }} result{{ result.total > 1 ? 's' : '' }}</div>
+    <div class="p-2">Page {{ query.page }} of {{ result.pageCount }}</div>
+    <div class="ml-auto p-2">
+        {{ dual_pagination(result.pageCount, query.page, 'dual_data', {
+            'class': meta.paramName
+        }) }}
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+    <tr>
+        {% for field in meta.fieldNames %}
+            <th>
+                {{ field }}
+
+                {% if query.sort == field %}
+                    {% if query.sortOrder == 'asc' %}
+                        <a href="{{ dual_query_url(query, {'so': field, 'ord': 'desc'}) }}" title="Descending sort">
+                            <i class="fa fa-caret-up" aria-hidden="true"></i>
+                        </a>
+                    {% else %}
+                        <a href="{{ dual_query_url(query, {'so': field, 'ord': 'asc'}) }}" title="Ascending sort">
+                            <i class="fa fa-caret-down" aria-hidden="true"></i>
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <a href="{{ dual_query_url(query, {'so': field, 'ord': 'asc'}) }}" title="Ascending sort" class="text-muted">
+                        <i class="fa fa-caret-up" aria-hidden="true"></i>
+                    </a>
+                {% endif %}
+            </th>
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for index, entry in result.data %}
+        <tr>
+            {% for fieldName, field in meta.fieldMappings %}
+                <td>
+                    {% include 'DualBundle::data/field/' ~ field.type ~ '.html.twig' with {
+                    'value': result.getValue(index, fieldName)
+                    } only %}
+                </td>
+            {% endfor %}
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="{{ meta.fieldNames|length }}" class="text-muted">
+                No result for this query.
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

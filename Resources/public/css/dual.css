@@ -1,8 +1,11 @@
-.select-popin {
+.popin-lg {
   background: #fff;
   position: fixed;
   right: 0;
   width: 95%;
   top: 5%;
   bottom: 5%;
+  border: 3px solid #000;
+  border-right: 0 none;
+  z-index: 999991;
 }

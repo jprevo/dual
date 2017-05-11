@@ -4,12 +4,10 @@
   "description": "",
   "main": "gulpfile.js",
   "dependencies": {
-    "gulp-concat": "^2.6.1",
     "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
     "gulp-concat-css": "^2.3.0",
     "gulp-less": "^3.3.0",
-    "gulp-typescript": "^3.1.6",
-    "typescript": "^2.3.2",
     "yargs": "^8.0.1"
   },
   "devDependencies": {},

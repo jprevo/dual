@@ -81,7 +81,8 @@ class FormBuilder
 
             $builder->add($assocName, AssociationType::class, [
                 'label' => $assocName,
-                'association' => $association
+                'association' => $association,
+                'emName' => $meta->getEmName()
             ]);
         }
 
