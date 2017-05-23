@@ -2,6 +2,7 @@
 
 namespace Jprevo\Dual\DualBundle\Controller;
 
+use Jprevo\Dual\DualBundle\Mapping\Mapper;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -19,7 +20,8 @@ class StructureController extends Controller
      */
     public function indexAction(Request $request, $class)
     {
-        $meta = $this->get('dual.mapper')->getMetaFromParam($class);
+        $class = Mapper::paramToClass($class);
+        $meta = $this->get('dual.mapper')->getMeta($class);
 
         return $this->render('DualBundle::structure/index.html.twig', [
             'meta' => $meta

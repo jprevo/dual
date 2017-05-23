@@ -15,9 +15,9 @@ class Executer
 {
 
     /**
-     * @var EntityManager[]
+     * @var Registry
      */
-    protected $ems = [];
+    protected $registry;
 
     /**
      * Executer constructor.
@@ -25,9 +25,7 @@ class Executer
      */
     public function __construct(Registry $registry)
     {
-        foreach ($registry->getManagerNames() as $id => $name) {
-            $this->ems[$id] = $registry->getManager($id);
-        }
+        $this->registry = $registry;
     }
 
     /**
@@ -35,9 +33,10 @@ class Executer
      * @param ClassMetadataProxy $meta
      * @return mixed
      */
-    public function save($entity, ClassMetadataProxy $meta)
+    public function save($entity)
     {
-        $em = $this->ems[$meta->getEmName()];
+        $em = $this->getRegistry()
+            ->getManagerForClass(get_class($entity));
 
         $em->persist($entity);
         $em->flush($entity);
@@ -54,9 +53,7 @@ class Executer
         $class = $query->getClassName();
         $alias = $this->getAlias($class);
 
-        $em = $this->getEm(
-            $query->getEmName()
-        );
+        $em = $this->getRegistry()->getManagerForClass($class);
 
         $qb = $em->createQueryBuilder();
 
@@ -64,7 +61,7 @@ class Executer
             ->from($class, $alias);
 
         $qb->setFirstResult(0);
-        $qb->setMaxResults( $query->getResultsPerPage() );
+        $qb->setMaxResults($query->getResultsPerPage());
 
         if ($query->getSort()) {
             $qb->orderBy($alias.'.'.$query->getSort(), strtoupper($query->getSortOrder()));
@@ -98,12 +95,11 @@ class Executer
     }
 
     /**
-     * @param $name
-     * @return EntityManager
+     * @return Registry
      */
-    protected function getEm($name)
+    protected function getRegistry()
     {
-        return $this->ems[$name];
+        return $this->registry;
     }
 
 }

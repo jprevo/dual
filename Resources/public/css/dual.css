@@ -8,4 +8,5 @@
   border: 3px solid #000;
   border-right: 0 none;
   z-index: 999991;
+  overflow: scroll;
 }

@@ -5,6 +5,8 @@ var Selector = function($link) {
     t.multiple = false;
     t.em = null;
     t.class = null;
+    t.datagrid = null;
+    t.data = [];
 
     var init = function() {
         t.multiple = $link.data('multiple');
@@ -22,7 +24,38 @@ var Selector = function($link) {
         }, function(response) {
             var popin = new Popin(response);
             popin.open();
+            t.initPopin(popin);
         });
+    };
+
+    t.initPopin = function(popin) {
+        t.datagrid = new Datagrid(popin.find('.datagrid'));
+
+        popin.find('.select-form').on('submit', function(e) {
+            e.preventDefault();
+            t.data = t.getFormData($(this));
+
+            var $container = $link.parents('.js-association');
+            $container.find('.js-selected').text(JSON.stringify(t.data));
+            $container.find('[type=hidden]').val(JSON.stringify(t.data));
+
+            popin.close();
+        });
+    };
+
+    t.getFormData = function($form) {
+        var data = [];
+        var selector = '[type=checkbox]:checked';
+
+        $form.find(selector).each(function() {
+            data.push($(this).val());
+        });
+
+        if (!t.multiple) {
+            data = data.shift();
+        }
+
+        return data;
     };
 
     init();

@@ -2,8 +2,11 @@
 
 namespace Jprevo\Dual\DualBundle\Data;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Jprevo\Dual\DualBundle\Data\Form\DataTransformer\EntityToAssociationTransformer;
 use Jprevo\Dual\DualBundle\Data\Form\Type\AssociationType;
+use Jprevo\Dual\DualBundle\Data\Form\DataTransformer\EntitiesToAssociationTransformer;
 use Jprevo\Dual\DualBundle\Mapping\ClassMetadataProxy;
 use Jprevo\Dual\DualBundle\Mapping\Mapper;
 use Jprevo\Dual\DualBundle\Mapping\Type\TypeFinder;
@@ -35,14 +38,20 @@ class FormBuilder
     protected $typeFinder;
 
     /**
+     * @var Registry
+     */
+    protected $doctrine;
+
+    /**
      * FormBuilder constructor.
      * @param FormFactory $formFactory
      */
-    public function __construct(FormFactory $formFactory, Mapper $mapper, TypeFinder $typeFinder)
+    public function __construct(Registry $doctrine, FormFactory $formFactory, Mapper $mapper, TypeFinder $typeFinder)
     {
         $this->formFactory = $formFactory;
         $this->mapper = $mapper;
         $this->typeFinder = $typeFinder;
+        $this->doctrine = $doctrine;
     }
 
     /**
@@ -50,12 +59,16 @@ class FormBuilder
      * @param ClassMetadataProxy $meta
      * @return \Symfony\Component\Form\FormBuilderInterface
      */
-    public function createBuilder($entity, ClassMetadataProxy $meta)
+    public function createBuilder($entity)
     {
-        $meta = $this->getMapper()->getMeta($meta->getEmName(), get_class($entity));
+        $mapper = $this->getMapper();
+        $meta = $mapper->getMeta(get_class($entity));
 
         $builder = $this->getFormFactory()
             ->createBuilder(FormType::class, $entity, []);
+
+        $em = $this->getDoctrine()
+            ->getManagerForClass(get_class($entity));
 
         foreach ($meta->fieldMappings as $fieldName => $field) {
             $type = $this->getTypeFinder()->find($field['type']);
@@ -69,12 +82,12 @@ class FormBuilder
             }
 
             $builder->add($fieldName, $type->getFormType($field), [
-                'label' => $fieldName
+                'label' => $fieldName,
+                'required' => false
             ]);
         }
 
         foreach ($meta->associationMappings as $assocName => $association) {
-
             if (!$association['isOwningSide']) {
                 continue;
             }
@@ -82,8 +95,16 @@ class FormBuilder
             $builder->add($assocName, AssociationType::class, [
                 'label' => $assocName,
                 'association' => $association,
-                'emName' => $meta->getEmName()
+                'required' => false
             ]);
+
+            if ($meta->isAssociationMultiple($assocName)) {
+                $transformer = new EntitiesToAssociationTransformer($em, $mapper, $association);
+            } else {
+                $transformer = new EntityToAssociationTransformer($em, $mapper, $association);
+            }
+
+            $builder->get($assocName)->addModelTransformer($transformer);
         }
 
         return $builder;
@@ -111,6 +132,14 @@ class FormBuilder
     protected function getTypeFinder()
     {
         return $this->typeFinder;
+    }
+
+    /**
+     * @return Registry
+     */
+    protected function getDoctrine()
+    {
+        return $this->doctrine;
     }
 
 }

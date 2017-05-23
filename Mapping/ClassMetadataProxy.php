@@ -18,18 +18,41 @@ class ClassMetadataProxy
     protected $source;
 
     /**
-     * @var string
-     */
-    protected $emName;
-
-    /**
      * ClassMetadataProxy constructor.
      * @param ClassMetadata $source
      */
-    public function __construct(ClassMetadata $source, $emName)
+    public function __construct(ClassMetadata $source)
     {
         $this->source = $source;
-        $this->emName = $emName;
+    }
+
+    /**
+     * @param $entity
+     * @return array
+     */
+    public function findId($entity)
+    {
+        $identifier = $this->identifier[0];
+        $getter = 'get'.ucfirst($identifier);
+        $id = $entity->$getter();
+
+        return $id;
+    }
+
+    /**
+     * @param string $associationName
+     * @return bool
+     */
+    public function isAssociationMultiple($associationName)
+    {
+        $association = $this->associationMappings[$associationName];
+        $type = $association['type'];
+
+        if ($type === ClassMetadata::ONE_TO_MANY || $type === ClassMetadata::MANY_TO_MANY) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -47,7 +70,7 @@ class ClassMetadataProxy
      */
     public function getParamName()
     {
-        return Mapper::classToParam($this->getEmName(), $this->getName());
+        return Mapper::classToParam($this->getName());
     }
 
     /**
@@ -68,14 +91,6 @@ class ClassMetadataProxy
         $className = $this->getName();
 
         return method_exists($className, $setter);
-    }
-
-    /**
-     * @return string
-     */
-    public function getEmName()
-    {
-        return $this->emName;
     }
 
     /**

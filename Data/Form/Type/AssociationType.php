@@ -21,12 +21,13 @@ class AssociationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'association',
-            'emName'
+            'association' => null,
+            'em_name' => 'default',
+            'compound' => false
         ]);
 
         $resolver->setRequired('association');
-        $resolver->setRequired('emName');
+        $resolver->setRequired('em_name');
     }
 
     /**
@@ -50,7 +51,7 @@ class AssociationType extends AbstractType
 
         $view->vars['multiple'] = $multiple;
         $view->vars['association'] = $options['association'];
-        $view->vars['em_name'] = $options['emName'];
+        $view->vars['em_name'] = $options['em_name'];
     }
 
 }

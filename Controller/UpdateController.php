@@ -2,6 +2,7 @@
 
 namespace Jprevo\Dual\DualBundle\Controller;
 
+use Jprevo\Dual\DualBundle\Mapping\Mapper;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -19,19 +20,20 @@ class UpdateController extends Controller
      */
     public function createAction(Request $request, $class)
     {
-        $meta = $this->get('dual.mapper')->getMetaFromParam($class);
+        $class = Mapper::paramToClass($class);
+        $meta = $this->get('dual.mapper')->getMeta($class);
         $className = $meta->getName();
 
         $entity = new $className();
 
         $form = $this->get('dual.form_builder')
-            ->createBuilder($entity, $meta)
+            ->createBuilder($entity)
             ->getForm();
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->get('dual.executer')->save($entity, $meta);
+            $this->get('dual.executer')->save($entity);
 
             return $this->redirectToRoute('dual_data', [
                 'class' => $class

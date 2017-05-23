@@ -15,10 +15,7 @@ use Jprevo\Dual\DualBundle\Exception\DualException;
 class Mapper
 {
 
-    /**
-     * @var EntityManager[]
-     */
-    protected $ems = [];
+    protected $registry;
 
     /**
      * Mapper constructor.
@@ -26,29 +23,7 @@ class Mapper
      */
     public function __construct(Registry $registry)
     {
-        foreach ($registry->getManagerNames() as $id => $name) {
-            $this->ems[$id] = $registry->getManager($id);
-        }
-    }
-
-    /**
-     * @param string $paramClass
-     * @return ClassMetadataProxy
-     * @throws DualException
-     */
-    public function getMetaFromParam($paramClass)
-    {
-        list($emName, $class) = static::paramToClass($paramClass);
-
-        if (!isset($this->ems[$emName])) {
-            throw new DualException(sprintf('Unable to find the Entity Manager "%s".', $emName));
-        }
-
-        $em = $this->ems[$emName];
-
-        $meta = $em->getMetadataFactory()->getMetadataFor($class);
-
-        return new ClassMetadataProxy($meta, $emName);
+        $this->registry = $registry;
     }
 
     /**
@@ -57,16 +32,12 @@ class Mapper
      * @return ClassMetadataProxy
      * @throws DualException
      */
-    public function getMeta($emName, $className)
+    public function getMeta($className)
     {
-        if (!isset($this->ems[$emName])) {
-            throw new DualException(sprintf('Unable to find the Entity Manager "%s".', $emName));
-        }
-
-        $em = $this->ems[$emName];
+        $em = $this->getRegistry()->getManagerForClass($className);
         $meta = $em->getMetadataFactory()->getMetadataFor($className);
 
-        return new ClassMetadataProxy($meta, $emName);
+        return new ClassMetadataProxy($meta);
     }
 
     /**
@@ -74,11 +45,9 @@ class Mapper
      * @param $className
      * @return string
      */
-    public static function classToParam($emName, $className)
+    public static function classToParam($className)
     {
-        $className = str_replace('\\', '/', $className);
-
-        return $emName . ':' . $className;
+        return str_replace('\\', '/', $className);
     }
 
     /**
@@ -87,10 +56,7 @@ class Mapper
      */
     public static function paramToClass($param)
     {
-        list($emName, $className) = explode(':', $param);
-        $className = str_replace('/', '\\', $className);
-
-        return [$emName, $className];
+        return str_replace('/', '\\', $param);
     }
 
     /**
@@ -101,9 +67,10 @@ class Mapper
     public function getTree()
     {
         $tree = [];
+        $ems = $this->getRegistry()->getManagers();
 
         // Create the tree
-        foreach ($this->ems as $name => $em) {
+        foreach ($ems as $name => $em) {
             $tree[$name] = [];
 
             /** @var ClassMetadata $metadata */
@@ -114,7 +81,7 @@ class Mapper
                     $tree[$name][$ns] = [];
                 }
 
-                $tree[$name][$ns][] = new ClassMetadataProxy($metadata, $name);
+                $tree[$name][$ns][] = new ClassMetadataProxy($metadata);
             }
         }
 
@@ -132,6 +99,14 @@ class Mapper
         }
 
         return $tree;
+    }
+
+    /**
+     * @return Registry
+     */
+    protected function getRegistry()
+    {
+        return $this->registry;
     }
 
 }

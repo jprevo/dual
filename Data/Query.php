@@ -19,11 +19,6 @@ class Query
     /**
      * @var string
      */
-    protected $emName;
-
-    /**
-     * @var string
-     */
     protected $className;
 
     /**
@@ -53,10 +48,6 @@ class Query
      */
     public function __construct(array $options)
     {
-        if (empty($options['emName'])) {
-            throw new QueryException('The entity manager name is required.');
-        }
-
         if (empty($options['className'])) {
             throw new QueryException('The entity class name is required.');
         }
@@ -77,15 +68,14 @@ class Query
     {
         $options = [];
 
-        if ($request->get('em')) {
-            $options['emName'] = $request->get('em');
+        if ($request->get('cl')) {
             $options['className'] = $request->get('cl');
         } else {
-            $emAndClass = $request->get('class');
-            list($emName, $className) = Mapper::paramToClass($emAndClass);
-            $options['emName'] = $emName;
+            $class = $request->get('class');
+            $className = Mapper::paramToClass($class);
             $options['className'] = $className;
         }
+
         $options['sort'] = $request->get('so');
         $options['sortOrder'] = $request->get('ord');
 
@@ -98,28 +88,11 @@ class Query
     public function toParameters()
     {
         return [
-            'em' => $this->getEmName(),
             'cl' => $this->getClassName(),
             'page' => $this->getPage(),
             'so' => $this->getSort(),
             'ord' => $this->getSortOrder()
         ];
-    }
-
-    /**
-     * @return string
-     */
-    public function getEmName()
-    {
-        return $this->emName;
-    }
-
-    /**
-     * @param string $emName
-     */
-    public function setEmName($emName)
-    {
-        $this->emName = $emName;
     }
 
     /**

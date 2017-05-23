@@ -2,6 +2,7 @@
 
 namespace Jprevo\Dual\DualBundle\Twig;
 use Jprevo\Dual\DualBundle\Data\Query;
+use Jprevo\Dual\DualBundle\Mapping\Mapper;
 use Symfony\Component\Routing\Router;
 
 /**
@@ -67,11 +68,10 @@ class TwigExtension extends \Twig_Extension
         $parameters = $query->toParameters();
         $parameters = array_merge($parameters, $override);
 
-        $class = $query->getEmName() . ':' . str_replace('\\', '/', $query->getClassName());
+        $class = Mapper::classToParam($query->getClassName());
         $parameters['class'] = $class;
 
         unset($parameters['cl']);
-        unset($parameters['em']);
 
         return $this->getRouter()->generate('dual_data', $parameters);
     }

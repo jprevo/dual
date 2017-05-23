@@ -49,18 +49,23 @@ class DataController extends Controller
         $query = Query::fromRequest($request);
 
         $meta = $this->get('dual.mapper')->getMeta(
-            $query->getEmName(),
             $query->getClassName()
         );
 
         $result = $this->get('dual.executer')
             ->execute($query);
 
-        return $this->render('DualBundle::data/index.html.twig', [
+        $vars = [
             'meta' => $meta,
             'result' => $result,
             'query' => $query
-        ]);
+        ];
+
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('DualBundle::data/display.html.twig', $vars);
+        }
+
+        return $this->render('DualBundle::data/index.html.twig', $vars);
     }
 
 

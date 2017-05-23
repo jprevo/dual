@@ -5,9 +5,7 @@
 
     {{ form_start(form) }}
 
-    {% for child in form.children %}
-        {{ form_row(child) }}
-    {% endfor %}
+    {{ form_widget(form) }}
 
     <div class="form-group">
         <input type="submit" class="btn btn-primary btn-lg" value="Create entry">

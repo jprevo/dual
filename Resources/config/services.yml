@@ -16,7 +16,7 @@ services:
 
     dual.form_builder:
         class: Jprevo\Dual\DualBundle\Data\FormBuilder
-        arguments: ['@form.factory', '@dual.mapper', '@dual.type_finder']
+        arguments: ['@doctrine', '@form.factory', '@dual.mapper', '@dual.type_finder']
 
     dual.type_finder:
         class: Jprevo\Dual\DualBundle\Mapping\Type\TypeFinder

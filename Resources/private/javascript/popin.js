@@ -4,9 +4,10 @@ var Popin = function(content) {
     var t = this;
 
     t.content = content;
+    var $popin;
 
     t.open = function() {
-        var $popin = $('<div class="popin-lg"></div>');
+        $popin = $('<div class="popin-lg"></div>');
         $popin.html(t.content);
         $('body').append($popin);
     };
@@ -14,4 +15,9 @@ var Popin = function(content) {
     t.close = function() {
         $('body > .popin-lg').remove();
     };
+
+    t.find = function(selector) {
+        return $popin.find(selector);
+    };
+
 };

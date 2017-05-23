@@ -4,4 +4,7 @@
     <h3>Select one entity</h3>
 {% endif %}
 
-{% include 'DualBundle::data/display.html.twig' %}
+<form class="select-form">
+    {% include 'DualBundle::data/display.html.twig' with {'select': true} %}
+    <input type="submit" class="btn btn-primary btn-lg" value="Ok">
+</form>

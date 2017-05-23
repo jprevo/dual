@@ -1,6 +1,5 @@
 {% block association_widget %}
-    <div>
-
+    <div class="js-association">
         <a href="#" class="btn btn-info js-select" data-multiple="{{ multiple ? 'true' : 'false' }}"
             data-em="{{ em_name }}" data-class="{{ association.targetEntity }}">
             <i class="fa fa-search-plus" aria-hidden="true"></i>
@@ -12,5 +11,10 @@
         {% else %}
             Select one <em>{{ association.targetEntity }}</em> entity.
         {% endif %}
+
+        <div class="js-selected">
+            {{ value }}
+        </div>
+        <input type="hidden" {{ block('widget_attributes') }} value="{{ value }}">
     </div>
 {% endblock %}
