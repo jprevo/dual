@@ -13,35 +13,8 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
  * @package Jprevo\Dual\DualBundle\Form\DataTransformer
  * @author Jonathan Prévost <php.dual@gmail.com>
  */
-class EntityToAssociationTransformer implements DataTransformerInterface
+class EntityToAssociationTransformer extends AbstractEntityTransformer
 {
-
-    /**
-     * @var EntityManager
-     */
-    protected $em;
-
-    /**
-     * @var Mapper
-     */
-    protected $mapper;
-
-    /**
-     * @var ClassMetadataProxy
-     */
-    protected $association;
-
-    /**
-     * EntityToAssociationTransformer constructor.
-     * @param EntityManager $em
-     * @param Mapper $mapper
-     */
-    public function __construct(EntityManager $em, Mapper $mapper, array $association)
-    {
-        $this->em = $em;
-        $this->mapper = $mapper;
-        $this->association = $association;
-    }
 
     /**
      * @param array $entities
@@ -49,10 +22,6 @@ class EntityToAssociationTransformer implements DataTransformerInterface
      */
     public function transform($entity)
     {
-        if (null === $entity) {
-            return null;
-        }
-
         $id = null;
 
         return json_encode($id);
@@ -68,39 +37,23 @@ class EntityToAssociationTransformer implements DataTransformerInterface
             return null;
         }
 
-        $mapper = $this->getMapper();
+        $id = json_decode($id);
 
-        dump($this->association);exit();
+        if (empty($id)) {
+            return null;
+        }
 
-        //$targetMapping = $mapper->getMeta($this->getEm()->)
+        $targetField = $this->associationToFieldName();
+        $targetMeta = $this->getTargetMeta();
 
         $qb = $this->getEm()->createQueryBuilder();
-        $field = $this->getMeta()->identifier[0];
 
         $qb->select('e')
-            ->from($this->getMeta()->getName(), 'e')
-            ->where('e.'.$field.' = :id')
+            ->from($targetMeta->getName(), 'e')
+            ->where('e.'.$targetField.' = :id')
             ->setParameter('id', $id);
 
-        var_dump($qb->getDQL());exit();
-
-        return $qb->getQuery()->getSingleResult();
-    }
-
-    /**
-     * @return EntityManager
-     */
-    protected function getEm()
-    {
-        return $this->em;
-    }
-
-    /**
-     * @return Mapper
-     */
-    protected function getMapper()
-    {
-        return $this->mapper;
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
 }

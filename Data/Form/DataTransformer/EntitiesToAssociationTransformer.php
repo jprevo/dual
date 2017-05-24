@@ -13,35 +13,8 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
  * @package Jprevo\Dual\DualBundle\Form\DataTransformer
  * @author Jonathan Prévost <php.dual@gmail.com>
  */
-class EntitiesToAssociationTransformer implements DataTransformerInterface
+class EntitiesToAssociationTransformer extends AbstractEntityTransformer
 {
-
-    /**
-     * @var EntityManager
-     */
-    protected $em;
-
-    /**
-     * @var Mapper
-     */
-    protected $mapper;
-
-    /**
-     * @var ClassMetadataProxy
-     */
-    protected $association;
-
-    /**
-     * EntityToAssociationTransformer constructor.
-     * @param EntityManager $em
-     * @param Mapper $mapper
-     */
-    public function __construct(EntityManager $em, Mapper $mapper, array $association)
-    {
-        $this->em = $em;
-        $this->mapper = $mapper;
-        $this->association = $association;
-    }
 
     /**
      * @param array $entities
@@ -49,18 +22,7 @@ class EntitiesToAssociationTransformer implements DataTransformerInterface
      */
     public function transform($entities)
     {
-        if (empty($entities)) {
-            return json_encode([]);
-        }
-
-        $ids = [];
-
-        foreach ($entities as $entity) {
-            $id = $this->getMeta()->findId($entity);
-            $ids[] = $id;
-        }
-
-        return json_encode($ids);
+        return json_encode([]);
     }
 
     /**
@@ -69,37 +31,27 @@ class EntitiesToAssociationTransformer implements DataTransformerInterface
      */
     public function reverseTransform($ids)
     {
-        $ids = json_decode($ids, true);
+        if (empty($ids)) {
+            return [];
+        }
+
+        $ids = json_decode($ids);
 
         if (empty($ids)) {
             return [];
         }
 
+        $targetField = $this->associationToFieldName();
+        $targetMeta = $this->getTargetMeta();
+
         $qb = $this->getEm()->createQueryBuilder();
-        $field = $this->getMeta()->identifier[0];
 
         $qb->select('e')
-            ->from($this->getMeta()->getName(), 'e')
-            ->where('e.'.$field.' IN (:ids)')
+            ->from($targetMeta->getName(), 'e')
+            ->where('e.'.$targetField.' IN (:ids)')
             ->setParameter('ids', $ids);
 
         return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * @return EntityManager
-     */
-    protected function getEm()
-    {
-        return $this->em;
-    }
-
-    /**
-     * @return ClassMetadataProxy
-     */
-    protected function getMeta()
-    {
-        return $this->meta;
     }
 
 }

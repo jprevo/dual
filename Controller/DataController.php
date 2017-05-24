@@ -26,7 +26,6 @@ class DataController extends Controller
         $query = Query::fromRequest($request);
 
         $meta = $this->get('dual.mapper')->getMeta(
-            $query->getEmName(),
             $query->getClassName()
         );
 
