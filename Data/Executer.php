@@ -60,7 +60,7 @@ class Executer
         $qb->select($alias)
             ->from($class, $alias);
 
-        $qb->setFirstResult(0);
+        $qb->setFirstResult($query->getFirstResult());
         $qb->setMaxResults($query->getResultsPerPage());
 
         if ($query->getSort()) {
@@ -70,7 +70,7 @@ class Executer
         $data = $qb->getQuery()->getResult();
         $dql = $qb->getDQL();
 
-        $count = $qb->select('COUNT('.$alias.')')->getQuery()->getSingleScalarResult();
+        $count = $qb->select('COUNT('.$alias.')')->setFirstResult(null)->getQuery()->getSingleScalarResult();
 
         $result = new Result($query, $data);
         $result->setDql($dql);

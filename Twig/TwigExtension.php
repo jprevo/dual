@@ -51,10 +51,30 @@ class TwigExtension extends \Twig_Extension
      * @param array $parameters
      * @return string
      */
-    public function getPagination($pages, $current, $path, array $parameters = [])
+    public function getPagination(Query $query, $pages, $path, array $parameters = [])
     {
-        return $this->getTwig()->render('DualBundle::common/pagination.html.twig', [
+        $current = $query->getPage();
 
+        $min = $current - 4;
+        $max = $current + 4;
+
+        if ($min < 1) {
+            $min = 1;
+        }
+
+        if ($max > $pages) {
+            $max = $pages;
+        }
+
+        $pageListing = range($min, $max);
+
+        return $this->getTwig()->render('DualBundle::common/pagination.html.twig', [
+            'pages' => $pageListing,
+            'max' => $pages,
+            'current' => $current,
+            'path' => $path,
+            'params' => $parameters,
+            'query' => $query
         ]);
     }
 

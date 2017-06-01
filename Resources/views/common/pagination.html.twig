@@ -1,16 +1,20 @@
 <nav aria-label="Navigation">
     <ul class="pagination">
         <li class="page-item">
-            <a class="page-link" href="#" aria-label="First">
+            <a class="page-link js-datagrid-link" href="{{ dual_query_url(query, {'page': 1}) }}" aria-label="First" data-page="1">
                 <span aria-hidden="true">&laquo;</span>
                 <span class="sr-only">First</span>
             </a>
         </li>
-        <li class="page-item"><a class="page-link" href="#">1</a></li>
-        <li class="page-item"><a class="page-link" href="#">2</a></li>
-        <li class="page-item"><a class="page-link" href="#">3</a></li>
+
+        {% for page in pages %}
+            <li class="page-item {{ page == current ? 'active' : '' }}">
+                <a class="page-link js-datagrid-link" href="{{ dual_query_url(query, {'page': page}) }}" data-page="{{ page }}">{{ page }}</a>
+            </li>
+        {% endfor %}
+
         <li class="page-item">
-            <a class="page-link" href="#" aria-label="Last">
+            <a class="page-link js-datagrid-link" href="{{ dual_query_url(query, {'page': max}) }}" aria-label="Last" data-page="{{ max }}">
                 <span aria-hidden="true">&raquo;</span>
                 <span class="sr-only">Last</span>
             </a>

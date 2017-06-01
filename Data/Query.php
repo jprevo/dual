@@ -78,6 +78,7 @@ class Query
 
         $options['sort'] = $request->get('so');
         $options['sortOrder'] = $request->get('ord');
+        $options['page'] = $request->get('page');
 
         return new static($options);
     }
@@ -116,6 +117,10 @@ class Query
      */
     public function getPage()
     {
+        if ($this->page < 1) {
+            $this->page = 1;
+        }
+
         return $this->page;
     }
 
@@ -125,6 +130,14 @@ class Query
     public function setPage($page)
     {
         $this->page = $page;
+    }
+
+    /**
+     * @return int
+     */
+    public function getFirstResult()
+    {
+        return ($this->getPage() - 1) * $this->getResultsPerPage();
     }
 
     /**
