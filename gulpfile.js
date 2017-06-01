@@ -11,6 +11,11 @@ gulp.task('less', function() {
         .pipe(gulp.dest('./Resources/public/css'));
 });
 
+gulp.task('css', function() {
+    return gulp.src('./Resources/private/css/*.css')
+        .pipe(gulp.dest('./Resources/public/css'));
+});
+
 gulp.task('javascript', function() {
     return gulp.src('./Resources/private/javascript/*.js')
         .pipe(concatJs('dual.js'))
@@ -20,8 +25,9 @@ gulp.task('javascript', function() {
 gulp.task('watch', function() {
     if (argv.watch) {
         gulp.watch('./Resources/private/less/*.less', ['less']);
+        gulp.watch('./Resources/private/css/*.css', ['css']);
         gulp.watch('./Resources/private/javascript/*.js', ['javascript']);
     }
 });
 
-gulp.task('default', ['less', 'javascript', 'watch']);
+gulp.task('default', ['less', 'css', 'javascript', 'watch']);
