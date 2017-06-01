@@ -42,6 +42,11 @@ class Query
     protected $sortOrder;
 
     /**
+     * @var string
+     */
+    protected $search;
+
+    /**
      * Query constructor.
      * @param array $options
      * @throws QueryException
@@ -79,6 +84,7 @@ class Query
         $options['sort'] = $request->get('so');
         $options['sortOrder'] = $request->get('ord');
         $options['page'] = $request->get('page');
+        $options['search'] = $request->get('q');
 
         return new static($options);
     }
@@ -92,7 +98,8 @@ class Query
             'cl' => $this->getClassName(),
             'page' => $this->getPage(),
             'so' => $this->getSort(),
-            'ord' => $this->getSortOrder()
+            'ord' => $this->getSortOrder(),
+            'q' => $this->getSearch()
         ];
     }
 
@@ -190,6 +197,22 @@ class Query
     public function setSortOrder($sortOrder)
     {
         $this->sortOrder = $sortOrder;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSearch()
+    {
+        return $this->search;
+    }
+
+    /**
+     * @param string $search
+     */
+    public function setSearch($search)
+    {
+        $this->search = $search;
     }
 
 }

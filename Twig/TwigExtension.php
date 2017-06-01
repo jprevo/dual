@@ -79,12 +79,18 @@ class TwigExtension extends \Twig_Extension
     }
 
     /**
-     * @param Query $query
+     * @param Query|string $query
      * @param array $override
      * @return string
      */
-    public function getQueryUrl(Query $query, array $override = [])
+    public function getQueryUrl($query, array $override = [])
     {
+        if (is_string($query)) {
+            $query = new Query([
+                'className' => $query
+            ]);
+        }
+
         $parameters = $query->toParameters();
         $parameters = array_merge($parameters, $override);
 

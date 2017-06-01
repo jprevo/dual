@@ -1,8 +1,6 @@
 <div class="datagrid">
     <pre><code>{{ result.dql }}</code></pre>
 
-    {{ dump(meta) }}
-
     <div class="d-flex flex-row">
         <div class="p-2">{{ result.total }} result{{ result.total > 1 ? 's' : '' }}</div>
         <div class="p-2">Page {{ query.page }} of {{ result.pageCount }}</div>

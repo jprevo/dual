@@ -10,3 +10,13 @@
   z-index: 999991;
   overflow: scroll;
 }
+pre {
+  overflow-x: auto;
+  color: lightgray;
+  margin-top: 1em;
+}
+
+pre code {
+  overflow-wrap: normal;
+  white-space: normal;
+}

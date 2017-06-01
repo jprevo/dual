@@ -54,6 +54,7 @@ class Executer
         $alias = $this->getAlias($class);
 
         $em = $this->getRegistry()->getManagerForClass($class);
+        $meta = $em->getMetadataFactory()->getMetadataFor($class);
 
         $qb = $em->createQueryBuilder();
 
@@ -65,6 +66,15 @@ class Executer
 
         if ($query->getSort()) {
             $qb->orderBy($alias.'.'.$query->getSort(), strtoupper($query->getSortOrder()));
+        }
+
+        if ($query->getSearch()) {
+            $search = $qb->expr()->orX();
+            foreach ($meta->fieldNames as $field) {
+                $search->add($alias.'.'.$field.' LIKE :search');
+            }
+            $qb->andWhere($search);
+            $qb->setParameter('search', '%'.$query->getSearch().'%');
         }
 
         $data = $qb->getQuery()->getResult();

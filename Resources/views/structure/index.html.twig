@@ -3,6 +3,8 @@
 {% block content %}
     <h2>{{ meta.getName() }}</h2>
 
+    {% include 'DualBundle:common:entity-menu.html.twig' %}
+
     <ul class="structure-options list-unstyled">
         {% if meta.hasDistinctRootEntity() %}
         <li>Root entity : {{ meta.rootEntityName }}</li>
@@ -84,5 +86,4 @@
             </tbody>
         </table>
     {% endif %}
-    {{ dump(meta) }}
 {% endblock %}
