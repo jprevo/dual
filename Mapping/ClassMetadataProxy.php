@@ -3,6 +3,7 @@
 namespace Jprevo\Dual\DualBundle\Mapping;
 
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Jprevo\Dual\DualBundle\Exception\DualException;
 
 /**
  * Class ClassMetadataProxy
@@ -28,15 +29,51 @@ class ClassMetadataProxy
 
     /**
      * @param $entity
-     * @return array
+     * @return mixed
      */
-    public function findId($entity)
+    public function findSingleId($entity)
     {
         $identifier = $this->identifier[0];
         $getter = 'get'.ucfirst($identifier);
         $id = $entity->$getter();
 
         return $id;
+    }
+
+    /**
+     * @param $entity
+     * @return string
+     */
+    public function findId($entity)
+    {
+        $id = [];
+
+        foreach ($this->identifier as $identifier) {
+            $getter = 'get'.ucfirst($identifier);
+            $id[] = $entity->$getter();
+        }
+
+        return join('-', $id);
+    }
+
+    /**
+     * @param array $id
+     * @return array
+     * @throws DualException
+     */
+    public function getFindCriterion(array $id)
+    {
+        $criterion = [];
+
+        if (sizeof($id) !== sizeof($this->identifier)) {
+            throw new DualException("Incomplete identifier, cannot extract lookup criterion.");
+        }
+
+        foreach ($this->identifier as $i => $identifier) {
+            $criterion[$identifier] = $id[$i];
+        }
+
+        return $criterion;
     }
 
     /**

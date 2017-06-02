@@ -22,7 +22,21 @@ class EntitiesToAssociationTransformer extends AbstractEntityTransformer
      */
     public function transform($entities)
     {
-        return json_encode([]);
+        if (empty($entities)) {
+            return json_encode([]);
+        }
+
+        $meta = $this->getTargetMeta();
+        $identifier = $meta->identifier[0];
+        $getter = 'get'.ucfirst($identifier);
+
+        $ids = [];
+
+        foreach ($entities as $entity) {
+            $ids[] = $entity->$getter();
+        }
+
+        return json_encode($ids);
     }
 
     /**

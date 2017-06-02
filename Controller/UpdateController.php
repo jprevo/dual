@@ -45,4 +45,40 @@ class UpdateController extends Controller
             'form' => $form->createView()
         ]);
     }
+
+
+    /**
+     * @Route("_dual/edit/{class}/{id}.html", name="dual_edit", requirements={"class" = ".+"})
+     */
+    public function editAction(Request $request, $class, $id)
+    {
+        $id = explode('-', $id);
+        $class = Mapper::paramToClass($class);
+        $meta = $this->get('dual.mapper')->getMeta($class);
+        $className = $meta->getName();
+        $criterion = $meta->getFindCriterion($id);
+
+        $entity = $this->get('doctrine')->getRepository($className)
+            ->findOneBy($criterion);
+
+        $form = $this->get('dual.form_builder')
+            ->createBuilder($entity)
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->get('dual.executer')->save($entity);
+
+            return $this->redirectToRoute('dual_data', [
+                'class' => $class
+            ]);
+        }
+
+        return $this->render('DualBundle::update/edit.html.twig', [
+            'meta' => $meta,
+            'form' => $form->createView(),
+            'id' => $id
+        ]);
+    }
 }

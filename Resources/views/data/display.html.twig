@@ -38,6 +38,9 @@
                     {% endif %}
                 </th>
             {% endfor %}
+            {% if not select|default(false) %}
+            <th></th>
+            {% endif %}
         </tr>
         </thead>
         <tbody>
@@ -46,9 +49,9 @@
                 {% if select|default(false) %}
                     <td>
                         {% if multiple %}
-                            <input type="checkbox" name="entity[]" value="{{ meta.findId(entry)|json_encode }}">
+                            <input type="checkbox" name="entity[]" value="{{ meta.findSingleId(entry)|json_encode }}">
                         {% else %}
-                            <input type="radio" name="entity" value="{{ meta.findId(entry)|json_encode }}">
+                            <input type="radio" name="entity" value="{{ meta.findSingleId(entry)|json_encode }}">
                         {% endif %}
                     </td>
                 {% endif %}
@@ -59,6 +62,12 @@
                         } only %}
                     </td>
                 {% endfor %}
+                {% if not select|default(false) %}
+                <td>
+                    <a class="btn btn-secondary" href="{{ path('dual_edit', {'class': meta.paramName, 'id': meta.findId(entry)|join('-')}) }}">Edit</a>
+                    <a class="btn btn-secondary" href="#">Delete</a>
+                </td>
+                {% endif %}
             </tr>
         {% else %}
             <tr>

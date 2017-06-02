@@ -1,0 +1,16 @@
+{% extends 'DualBundle:layout:default.html.twig' %}
+
+{% block content %}
+    <h2>Update <em>{{ meta.name }}</em> entity <small>(id : {{ id|join('-') }})</small></h2>
+
+    {{ form_start(form) }}
+
+    {{ form_widget(form) }}
+
+    <div class="form-group">
+        <input type="submit" class="btn btn-primary btn-lg" value="Update entry">
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}
